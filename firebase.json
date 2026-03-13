@@ -1,17 +1,1 @@
-{
-  "hosting": {
-    "public": "main",
-    "cleanUrls": true,
-    "rewrites": [
-      {
-        "source": "/s/**",
-        "destination": "/view.html"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-  }
-}
+
