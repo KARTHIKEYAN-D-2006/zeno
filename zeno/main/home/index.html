@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/home/style.css" />
+    <title>Project Zeno - Static Host Dashboard</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="logo">ZENO</div>
+      <nav>
+        <a href="/view.html" class="btn-outline">My Sites (Empty Frame Viewer)</a>
+        <a href="/index.html" class="btn-outline">Home</a>
+        <button id="logoutBtn" class="btn-outline">Logout</button>
+      </nav>
+    </header>
+
+    <main id="appGrid" class="app-grid">
+      <section class="card upload-card">
+        <h2>Drag & Drop Upload</h2>
+        <div id="dropZone" class="drop-zone">Drop HTML/CSS/JS files here or click to browse</div>
+        <input type="file" id="fileInput" webkitdirectory directory multiple accept=".html,.css,.js" hidden />
+
+        <div class="file-summary">
+          <h3>Selected Files</h3>
+          <ul id="fileList" class="file-list"></ul>
+        </div>
+
+        <button id="deployBtn" class="btn-primary">Deploy to Subdomain</button>
+        <div class="deploy-meta">
+          <span>Assigned URL:</span> <code id="liveUrl">-</code>
+        </div>
+        <div class="deployments-list">
+          <h3>My Deployments</h3>
+          <ul id="deploymentsList" class="file-list"></ul>
+        </div>
+      </section>
+
+      <section class="card ai-card">
+        <h2>AI Builder</h2>
+        <div class="ai-chat">
+          <textarea id="aiPrompt" rows="4" placeholder="Describe the site you want (e.g., marketing landing page with hero, features, signup, gradient, modern style)"></textarea>
+          <button id="aiGenerate" class="btn-secondary">Generate Website</button>
+        </div>
+
+        <div class="generated-output">
+          <h3>AI Generated Preview</h3>
+          <div class="two-col">
+            <div>
+              <h4>index.html</h4>
+              <pre id="generatedHtml" class="code-block">&lt;!-- Generated file appears here --&gt;</pre>
+            </div>
+            <div>
+              <h4>style.css</h4>
+              <pre id="generatedCss" class="code-block">/* Generated CSS appears here */</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card logs-card">
+        <h2>Deployment Logs</h2>
+        <pre id="logOutput" class="log-output">Ready.</pre>
+      </section>
+    </main>
+
+    <script type="module" src="/home/upload.js"></script>
+    <script type="module" src="/home/script.js"></script>
+  </body>
+</html>

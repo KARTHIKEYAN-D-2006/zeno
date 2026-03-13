@@ -1,0 +1,120 @@
+body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url("../images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.darkLayer{
+    position: absolute;
+    background-color:rgba(0,0,0,.4);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+.loginHolder{
+    position: relative;
+}
+
+.loginHolder .loginForm{
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 30px;
+    width: 500px;
+}
+
+
+.loginHolder .loginForm .inputHolder{
+    margin: 0 0 15px;
+}
+
+.loginHolder .loginForm input{
+    border-radius: 5px;
+    border:1px solid #ccc;
+    padding: 0 15px;
+    height: 45px;
+    line-height: 45px;
+    font-size: 14px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.loginHolder .loginForm .inputHolder button{
+    background-color:#4460f1;
+    color:#fff;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+    width: 100%;
+    border-radius: 5px;
+    margin: 0 0 15px;
+    height: 45px;
+    line-height: 45px;
+    border:none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.loginHolder .loginForm .forgotPassword{
+    font-size: 14px;
+    color:#888;
+}
+
+
+.loginHolder .loginForm .forgotPassword a{
+    text-decoration: none;
+}
+
+.loginHolder .loginForm .socialHolder{
+    position: relative;
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+}
+
+.loginHolder .loginForm .socialHolder span{
+    background-color: #fff;
+    padding:5px;
+    position: absolute;
+    left: 50%;
+    transform:translateX(-50%);
+    top: -21%;
+}
+
+.loginHolder .loginForm .socialHolder ul{
+    margin: 30px 0 0 0;
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginHolder .loginForm .socialHolder ul li{
+    margin: 0 7.5px;
+}
+
+.loginHolder .loginForm .socialHolder ul li a{
+    padding: 7.5px;
+    border-radius: 5px;
+    border:1px solid #ccc;
+    display: inline-block;
+    line-height: 0;
+}
+
+.loginHolder .loginForm .socialHolder ul li img{
+    width: 25px;
+    height: 25px;
+}
+

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <title>Project Zeno - My Hosted Sites</title>
+    <style>
+      .sites-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+      .site-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .site-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      }
+      .site-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 0.5rem;
+      }
+      .site-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--accent);
+      }
+      .site-status {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .site-detail {
+        font-size: 0.85rem;
+        color: #bbb;
+        margin-bottom: 0.5rem;
+      }
+      .site-links {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.5rem;
+      }
+      .site-links a {
+        flex: 1;
+        text-align: center;
+        padding: 0.5rem;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #888;
+        grid-column: 1 / -1;
+      }
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        grid-column: 1 / -1;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="logo">ZENO</div>
+      <nav>
+        <a href="index.html" class="btn-outline">Dashboard</a>
+        <button id="logoutBtn" class="btn-outline">Logout</button>
+      </nav>
+    </header>
+
+    <main class="app-grid" style="display: block;">
+      <section class="card" style="width: 100%;">
+        <h2>My Hosted Sites</h2>
+        <p>A list of all sites you have deployed.</p>
+        
+        <div id="sitesContainer" class="sites-grid">
+          <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading your deployments...</div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const API_BASE = 'https://zeno-39d68.web.app';
+      const LOCAL_DEV_API = 'http://localhost:5000'; // fallback
+      const sitesContainer = document.getElementById('sitesContainer');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      function logoutUser() {
+        localStorage.removeItem('zenoUserEmail');
+        window.location.href = '../signin/index.html';
+      }
+
+      function checkSession() {
+        const loggedEmail = localStorage.getItem('zenoUserEmail');
+        if (!loggedEmail) {
+          window.location.href = '../signin/index.html';
+          return null;
+        }
+        return loggedEmail;
+      }
+
+      function createSiteCard(deploy) {
+        const card = document.createElement('div');
+        card.className = 'site-card';
+        
+        const dateStr = new Date(deploy.updatedAt).toLocaleString();
+        const fileCount = deploy.uploaded ? deploy.uploaded.length : 0;
+        
+        // Ensure link works locally if testing locally
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        let linkTemplate = deploy.url;
+        if (isLocal && !deploy.url.includes(LOCAL_DEV_API)) {
+           // Provide a direct link to the local serving logic as fallback
+           linkTemplate = `${LOCAL_DEV_API}/${deploy.subdomain}`;
+        }
+        
+        card.innerHTML = `
+          <div class="site-header">
+            <span class="site-title">${deploy.subdomain}</span>
+            <span class="site-status"><i class="fas fa-circle" style="font-size: 8px; vertical-align: middle; margin-right: 4px;"></i> Live</span>
+          </div>
+          <div class="site-detail"><i class="fas fa-calendar-alt"></i> ${dateStr}</div>
+          <div class="site-detail"><i class="fas fa-file-code"></i> ${fileCount} files</div>
+          <div class="site-links">
+            <a href="${linkTemplate}" target="_blank" class="btn-primary">Visit Site <i class="fas fa-external-link-alt" style="margin-left: 4px;"></i></a>
+          </div>
+        `;
+        return card;
+      }
+
+      async function fetchDeployments(userId) {
+        try {
+          // Attempting against LOCAL_DEV_API during local dev for demo
+          const endpoint = `${LOCAL_DEV_API}/api/deployments/${encodeURIComponent(userId)}`;
+          const res = await fetch(endpoint);
+          if (!res.ok) throw new Error('Failed to fetch from API');
+          const data = await res.json();
+          renderDeployments(data.deployments || []);
+        } catch (err) {
+          console.error(err);
+          sitesContainer.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle fa-2x"></i><p>Unable to connect to deployment service. Ensure server is running.</p></div>';
+        }
+      }
+
+      function renderDeployments(deployments) {
+        sitesContainer.innerHTML = '';
+        if (deployments.length === 0) {
+          sitesContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-box-open fa-3x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+              <p>You haven't deployed any sites yet.</p>
+              <a href="index.html" class="btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none;">Go to Dashboard</a>
+            </div>
+          `;
+          return;
+        }
+
+        deployments.reverse().forEach(deploy => {
+          sitesContainer.appendChild(createSiteCard(deploy));
+        });
+      }
+
+      const userId = checkSession();
+      if (userId) {
+        logoutBtn.addEventListener('click', logoutUser);
+        fetchDeployments(userId);
+      }
+    </script>
+  </body>
+</html>

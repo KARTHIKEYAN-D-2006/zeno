@@ -1,0 +1,219 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+:root {
+  --bg: #0cbd53;
+  --surface: #16aa5b;
+  --surface-soft: #22a579;
+  --accent: #a7ca97;
+  --accent-dark: #6f8f5e;
+  --text: #f4f8f4;
+  --text-soft: #d7ead8;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--text);
+  background: linear-gradient(120deg, #269134, #123725 30%, #163d2a 100%);
+}
+
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(9, 30, 16, 0.82);
+  border-bottom: 1px solid rgba(167, 202, 151, 0.25);
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #def2d7;
+}
+
+.brand-tag {
+  font-weight: 400;
+  color: var(--accent);
+  margin-left: 0.25rem;
+}
+
+.main-nav a {
+  color: var(--text);
+  text-decoration: none;
+  margin-left: 1.2rem;
+  font-weight: 600;
+}
+
+.main-nav a:hover {
+  color: var(--accent);
+}
+
+.hero-section {
+  position: relative;
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2.5rem 1.8rem;
+  background: url('https://conversight.ai/wp-content/uploads/2025/07/Group-628242-1024x669.png') center/cover no-repeat;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 38, 19, 0.68), rgba(13, 45, 25, 0.76));
+}
+
+.hero-content {
+  position: relative;
+  max-width: 780px;
+  color: #ebf5e9;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+  text-align: left;
+  padding-left: 1rem;
+}
+
+.hero-logo {
+  margin: 0 0 1rem 0;
+  width: 96px;
+  height: 96px;
+}
+
+.hero-logo img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+  width: 96px;
+  height: 96px;
+}
+
+.hero-logo img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+
+.hero-section h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-section h2 {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  margin-bottom: 1rem;
+  color: var(--text-soft);
+}
+
+.hero-section p {
+  margin-bottom: 1.4rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #d6e6d0;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(140deg, var(--accent), #b7d4a7);
+  color: #14421e;
+}
+
+.info-section {
+  padding: 3rem 2rem;
+  max-width: 1020px;
+  margin: 0 auto;
+  color: var(--text);
+}
+
+.info-section h2 {
+  margin-bottom: 0.8rem;
+  color: var(--accent);
+}
+
+.info-section p,
+.info-section ul {
+  font-size: 1.03rem;
+  line-height: 1.7;
+}
+
+.info-section ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.info-section li {
+  margin: 0.4rem 0;
+}
+
+.info-section.alternate {
+  background: rgba(15, 41, 24, 0.45);
+  border-top: 1px solid rgba(168, 225, 177, 0.22);
+}
+
+.site-footer {
+  padding: 0.6rem 1.2rem;
+  background: rgba(13, 30, 17, 0.95);
+  color: var(--text-soft);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 58px;
+}
+
+.footer-left h3 {
+  color: var(--accent);
+}
+
+.footer-links a {
+  display: block;
+  color: #d9e9d3;
+  margin: 0.25rem 0;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+.footer-copy {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .main-header,
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+  }
+
+  .main-nav {
+    margin-top: 0.8rem;
+  }
+
+  .hero-section {
+    min-height: auto;
+    padding: 4rem 1.2rem;
+  }
+}

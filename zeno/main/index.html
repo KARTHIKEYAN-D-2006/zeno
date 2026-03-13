@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zeno - Main Landing</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="logo">ZENO</div>
+      <nav class="main-nav">
+        <a id="nav-workspace" href="/home/index.html" style="display: none;">WORKSPACE</a>
+        <a id="nav-gallery" href="/dashboard.html" style="display: none;">GALLERY</a>
+        <a id="nav-signin" href="/signin/index.html">SIGN IN</a>
+        <a href="#about">ABOUT</a>
+        <a href="#contact">CONTACT</a>
+      </nav>
+    </header>
+
+    <main class="hero-section">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-logo"><img src="/logo.png" alt="Zeno logo" /></div>
+        <h1>ZENO</h1>
+        <h2>Smart platform for modern deployments and cloud labs.</h2>
+        <p>From company roots to fast engineering workflows. Build, sign in, deploy and ship with total control.</p>
+        <a href="/signin/index.html" class="btn btn-primary">Sign In</a>
+      </div>
+    </main>
+
+    <section id="about" class="info-section">
+      <h2>About Zeno</h2>
+      <p>
+        Zeno is a unified dashboard for developers and teams that brings together deployment automation,
+        code editing, and secure access controls in a single interface. Our mission is to reduce operational
+        friction with intuitive workflows and a visual workspace.
+      </p>
+    </section>
+
+    <section id="contact" class="info-section alternate">
+      <h2>Contact</h2>
+      <p>Get in touch with the team at <a href="mailto:hello@zeno.example">coverright@gmail.com</a> or use the following channels:</p>
+      <ul>
+        <li>Twitter: @zeno_labs</li>
+        <li>LinkedIn: Zeno Labs</li>
+      </ul>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-left">
+        <h3>Zeno</h3>
+        <p>Navigate with purpose. Scale with stability.</p>
+      </div>
+    
+      <div class="footer-copy">© 2026 Zeno Labs. All rights reserved.</div>
+    </footer>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      
+      const firebaseConfig = {
+        apiKey: "AIzaSyBwvtKIo2iELihmUu7BOUxnM8Q73nNpA3U",
+        authDomain: "zeno-39d68.firebaseapp.com",
+        projectId: "zeno-39d68",
+        messagingSenderId: "378901269976",
+        appId: "1:378901269976:web:ac687cba56c7972f3c36ad",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      const navWorkspace = document.getElementById("nav-workspace");
+      const navGallery = document.getElementById("nav-gallery");
+      const navSignin = document.getElementById("nav-signin");
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          navWorkspace.style.display = "inline-block";
+          navGallery.style.display = "inline-block";
+          navSignin.textContent = "SIGN OUT";
+          navSignin.href = "#";
+          navSignin.onclick = (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => {
+                window.location.reload();
+            });
+          };
+        } else {
+          navWorkspace.style.display = "none";
+          navGallery.style.display = "none";
+          navSignin.textContent = "SIGN IN";
+          navSignin.href = "/signin/index.html";
+          navSignin.onclick = null;
+        }
+      });
+    </script>
+  </body>
+</html>

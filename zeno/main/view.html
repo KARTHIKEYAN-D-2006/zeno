@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zeno Directory Viewer</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0b1a14;
+        color: #e8f2e8;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #1f3a2e;
+        border-radius: 12px;
+        border: 1px solid #3a5b48;
+        padding: 2rem;
+      }
+      h1 { margin-top: 0; color: #9cbf8a; font-size: 1.5rem; border-bottom: 1px solid #3a5b48; padding-bottom: 1rem; }
+      .file-list {
+        list-style: none;
+        padding: 0;
+      }
+      .file-item {
+        margin-bottom: 0.5rem;
+      }
+      .file-link {
+        display: block;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        color: #e8f2e8;
+        text-decoration: none;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .file-link:hover {
+        background: rgba(156, 191, 138, 0.1);
+        border-color: #9cbf8a;
+      }
+      .file-icon { margin-right: 0.5rem; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <h1>Loading Project...</h1>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBwvtKIo2iELihmUu7BOUxnM8Q73nNpA3U",
+          authDomain: "zeno-39d68.firebaseapp.com",
+          databaseURL: "https://zeno-39d68-default-rtdb.firebaseio.com",
+          projectId: "zeno-39d68",
+          storageBucket: "zeno-39d68.firebasestorage.app",
+          messagingSenderId: "378901269976",
+          appId: "1:378901269976:web:ac687cba56c7972f3c36ad",
+          measurementId: "G-77M9FRYPCS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // e.g. /s/project-id or /s/project-id/index.html
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const siteId = pathSegments[1]; 
+        const specificFile = pathSegments[2]; 
+
+        const appDiv = document.getElementById('app');
+
+        function renderContent(fileObj, projectFilesMap) {
+            let content = fileObj.content || "";
+            // If it's HTML, we render natively
+            if (fileObj.name.toLowerCase().endsWith('.html')) {
+                // If there's a style.css in the project, try to inject it automatically for them if not linked
+                const cssFiles = Object.values(projectFilesMap).filter(f => f.name.toLowerCase().endsWith('.css'));
+                let injectedCSS = "";
+                cssFiles.forEach(css => {
+                    injectedCSS += `<style>${css.content}</style>\n`;
+                });
+
+                document.open();
+                document.write(injectedCSS + content);
+                document.close();
+            } else {
+                // Return text wrapper 
+                document.body.innerHTML = `<pre style="padding: 2rem; background: #222; color: #fff; margin: 0; min-height: 100vh;">${content.replace(/</g, '&lt;')}</pre>`;
+            }
+        }
+
+        if (!siteId) {
+            appDiv.innerHTML = "<h1>Invalid Request</h1><p>Missing Project ID.</p>";
+        } else {
+            get(ref(database, 'projects/' + siteId)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const project = snapshot.val();
+                    const filesMap = project.files || {};
+                    const filesArray = Object.values(filesMap);
+
+                    if (filesArray.length === 0) {
+                        appDiv.innerHTML = "<h1>Empty Project</h1><p>No files were found in this deployment.</p>";
+                        return;
+                    }
+
+                    // If a specific file was requested in URL (/s/project/file.html)
+                    if (specificFile) {
+                        const target = filesArray.find(f => f.name === specificFile);
+                        if (target) {
+                            renderContent(target, filesMap);
+                        } else {
+                            appDiv.innerHTML = `<h1>File not found</h1><p>${specificFile} does not exist in this project.</p>`;
+                        }
+                    } 
+                    // If project only has exactly 1 file AND it's HTML, auto-render it instead of showing directory
+                    else if (filesArray.length === 1 && filesArray[0].name.toLowerCase().endsWith('.html')) {
+                         renderContent(filesArray[0], filesMap);
+                    } 
+                    // Otherwise show Directory Menu
+                    else {
+                        appDiv.innerHTML = `
+                            <h1>Project: ${project.projectName}</h1>
+                            <p>Select a file to view:</p>
+                            <ul class="file-list" id="fileList"></ul>
+                        `;
+                        const ul = document.getElementById('fileList');
+                        filesArray.forEach(f => {
+                            const li = document.createElement('li');
+                            li.className = 'file-item';
+                            li.innerHTML = `<div class="file-link" data-name="${f.name}">📄 ${f.name}</div>`;
+                            
+                            // Attach click event for SPA-style internal routing
+                            li.querySelector('.file-link').addEventListener('click', () => {
+                                window.history.pushState({}, '', `/s/${siteId}/${f.name}`);
+                                renderContent(f, filesMap);
+                            });
+
+                            ul.appendChild(li);
+                        });
+                    }
+                } else {
+                    appDiv.innerHTML = "<h1>404</h1><p>Project not found.</p>";
+                }
+            }).catch((error) => {
+                console.error("Error fetching site data:", error);
+                appDiv.innerHTML = "<h1>Error loading project</h1><p>Check console for details.</p>";
+            });
+        }
+    </script>
+</body>
+</html>
